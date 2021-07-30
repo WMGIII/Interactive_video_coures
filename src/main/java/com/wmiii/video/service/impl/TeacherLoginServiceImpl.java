@@ -11,6 +11,7 @@ import com.wmiii.video.utils.JWTUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 @Transactional
 public class TeacherLoginServiceImpl implements TeacherLoginService {
-    @Autowired
+    @Autowired @Lazy
     private TeacherService teacherService;
 
     @Autowired

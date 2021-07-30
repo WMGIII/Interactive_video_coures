@@ -10,6 +10,7 @@ import com.wmiii.video.params.vo.LoginTeacherVo;
 import com.wmiii.video.service.TeacherLoginService;
 import com.wmiii.video.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
-    @Autowired
+    @Autowired @Lazy
     private TeacherLoginService teacherLoginService;
 
     @Override

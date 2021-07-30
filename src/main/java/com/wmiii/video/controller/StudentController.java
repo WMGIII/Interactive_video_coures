@@ -14,8 +14,9 @@ public class StudentController {
 
     @Autowired
     private StudentService studentService;
-    @PostMapping("/currentUser")
-    public Result currentUser(@RequestHeader("Authorization") String token) {
+
+    @PostMapping("/usercenter")
+    public Result currentUser(@RequestHeader(value="Authorization", required = false) String token) {
         return studentService.findUserByToken(token);
     }
 }
