@@ -1,11 +1,12 @@
 package com.wmiii.video.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
 @Data
 public class Teacher {
-    // @Id
+    @TableId(value = "teacherId")
     private Integer teacherId;
     private String email;
     private String pwd;

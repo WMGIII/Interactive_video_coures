@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @Component
 @Slf4j
-public class LoginInterceptor implements HandlerInterceptor {
+public class StudentLoginInterceptor implements HandlerInterceptor {
     @Autowired
     private StudentLoginService studentLoginService;
 
