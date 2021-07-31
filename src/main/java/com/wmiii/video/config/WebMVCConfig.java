@@ -27,6 +27,7 @@ public class WebMVCConfig implements WebMvcConfigurer {
         List<String> studentPatterns = new ArrayList<>();
         List<String> teacherPatterns = new ArrayList<>();
         studentPatterns.add("/student/user_center");
+        studentPatterns.add("/course/*/join");
         registry.addInterceptor(studentLoginInterceptor).addPathPatterns(studentPatterns);
 
         teacherPatterns.add("/teacher/user_center");
