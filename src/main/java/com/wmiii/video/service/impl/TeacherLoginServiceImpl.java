@@ -62,7 +62,7 @@ public class TeacherLoginServiceImpl implements TeacherLoginService {
         if (StringUtils.isBlank(teacherJSON)) {
             return null;
         }
-        Teacher teacher = JSON.parseObject(teacherJSON, Teacher.class));
+        Teacher teacher = JSON.parseObject(teacherJSON, Teacher.class);
         if (teacher.getTeacherId() == null || teacher.getTeacherName() == null) {
             return null;
         }

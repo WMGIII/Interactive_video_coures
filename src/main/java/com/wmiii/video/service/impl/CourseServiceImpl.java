@@ -37,7 +37,7 @@ public class CourseServiceImpl implements CourseService {
     private StudentService studentService;
 
     @Autowired
-    private TeacherService teacherService;
+    private TeacherService teacherLoginService;
 
     @Override
     public Result findCourseById(Integer courseId) {
@@ -72,11 +72,11 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Result submit(CourseParam courseParam) {
+    public Result submit(CourseParam courseParam, String token) {
         if (StringUtils.isBlank(courseParam.getCourseName()) || StringUtils.isBlank(courseParam.getCourseIntro())) {
             return Result.fail(ErrorCode.PARAMS_ERROR.getCode(), ErrorCode.PARAMS_ERROR.getMsg());
         }
-        Teacher teacher = TeacherThreadLocal.get();
+        Teacher teacher = (Teacher)teacherLoginService.findUserByToken(token).getData();
         if ((findCourseByCourseNameAndTeacher(teacher.getTeacherId(), courseParam.getCourseName())) != null) {
             return Result.fail(ErrorCode.CREATE_COURSE_FAIL.getCode(), ErrorCode.CREATE_COURSE_FAIL.getMsg());
         }
@@ -109,7 +109,11 @@ public class CourseServiceImpl implements CourseService {
 
 
     @Override
-    public Result getAllCourses() {
-        return null;
+    public Result getAllCourses(Integer limit) {
+        LambdaQueryWrapper<Course> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.ne(Course::getCourseId, -1);
+        // queryWrapper.last("limit " + limit);
+
+        return Result.success(courseMapper.selectList(queryWrapper));
     }
 }

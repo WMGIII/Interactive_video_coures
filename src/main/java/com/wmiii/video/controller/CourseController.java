@@ -22,8 +22,8 @@ public class CourseController {
     }
 
     @PostMapping("/create_course/submit")
-    public Result submit(@RequestBody CourseParam courseParam) {
-        return courseService.submit(courseParam);
+    public Result submit(@RequestHeader(value="Authorization", required = false) String token, @RequestBody CourseParam courseParam) {
+        return courseService.submit(courseParam, token);
     }
 
     @PostMapping("/{courseId}")
