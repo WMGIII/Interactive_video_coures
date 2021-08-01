@@ -11,6 +11,7 @@ import com.wmiii.video.params.CourseParam;
 import com.wmiii.video.params.ErrorCode;
 import com.wmiii.video.params.Result;
 import com.wmiii.video.params.StudentCourse;
+import com.wmiii.video.params.vo.LoginStudentVo;
 import com.wmiii.video.params.vo.LoginTeacherVo;
 import com.wmiii.video.service.CourseService;
 import com.wmiii.video.service.StudentService;
@@ -39,7 +40,7 @@ public class CourseServiceImpl implements CourseService {
     private StudentService studentService;
 
     @Autowired
-    private TeacherService teacherLoginService;
+    private TeacherService teacherService;
 
     @Override
     public Result findCourseById(Integer courseId) {
@@ -78,7 +79,7 @@ public class CourseServiceImpl implements CourseService {
         if (StringUtils.isBlank(courseParam.getCourseName()) || StringUtils.isBlank(courseParam.getCourseIntro())) {
             return Result.fail(ErrorCode.PARAMS_ERROR.getCode(), ErrorCode.PARAMS_ERROR.getMsg());
         }
-        LoginTeacherVo teacher = (LoginTeacherVo) teacherLoginService.findUserByToken(token).getData();
+        LoginTeacherVo teacher = (LoginTeacherVo) teacherService.findUserByToken(token).getData();
         if (teacher == null) {
             return Result.fail(ErrorCode.NO_LOGIN.getCode(), ErrorCode.NO_LOGIN.getMsg());
         }
@@ -100,8 +101,9 @@ public class CourseServiceImpl implements CourseService {
 
 
     @Override
-    public Result joinCourse(Integer courseId) {
-        Student student = StudentThreadLocal.get();
+    public Result joinCourse(Integer courseId, String token) {
+        // Student student = StudentThreadLocal.get();
+        LoginStudentVo student = (LoginStudentVo) studentService.findUserByToken(token).getData();
         if (findStudentCourse(student.getStudentId(), courseId) != null) {
             return Result.fail(ErrorCode.ACCOUNT_EXIST.getCode(), ErrorCode.ACCOUNT_EXIST.getMsg());
         }

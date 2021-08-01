@@ -11,7 +11,7 @@ public interface CourseService {
 
     Result findCourseByTeacherId(Integer teacherId);
 
-    Result joinCourse(Integer courseId);
+    Result joinCourse(Integer courseId, String token);
 
     Result getAllCourses(Integer limit);
 }

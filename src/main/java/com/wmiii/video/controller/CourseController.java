@@ -37,7 +37,7 @@ public class CourseController {
     }
 
     @PostMapping("/{courseId}/join")
-    public Result joinCourse(@PathVariable Integer courseId) {
-        return courseService.joinCourse(courseId);
+    public Result joinCourse(@RequestHeader(value="Authorization", required = false) String token, @PathVariable Integer courseId) {
+        return courseService.joinCourse(courseId, token);
     }
 }
