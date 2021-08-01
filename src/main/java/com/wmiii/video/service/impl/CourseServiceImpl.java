@@ -93,7 +93,6 @@ public class CourseServiceImpl implements CourseService {
     }
 
 
-
     @Override
     public Result joinCourse(Integer courseId) {
         Student student = StudentThreadLocal.get();
