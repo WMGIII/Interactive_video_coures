@@ -106,4 +106,10 @@ public class CourseServiceImpl implements CourseService {
         this.studentCourseMapper.insert(studentCourse);
         return Result.success(null);
     }
+
+
+    @Override
+    public Result getAllCourses() {
+        return null;
+    }
 }

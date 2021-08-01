@@ -28,7 +28,7 @@ public class TeacherLoginServiceImpl implements TeacherLoginService {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
-    private static final String salt = "123!@#";
+    private static final String salt = "678^&*";
 
     @Override
     public Result teacherLogin(LoginParam loginParam) {
@@ -43,7 +43,7 @@ public class TeacherLoginServiceImpl implements TeacherLoginService {
         if (teacher == null) {
             return Result.fail(ErrorCode.ACCOUNT_PWD_NOT_EXIST.getCode(), ErrorCode.ACCOUNT_PWD_NOT_EXIST.getMsg());
         }
-        String token = JWTUtils.createToken(teacher.getTeacherId());
+        String token = JWTUtils.createToken(teacher.getTeacherId(), "teacher");
         redisTemplate.opsForValue().set("TOKEN_" + token, JSON.toJSONString(teacher), 1, TimeUnit.DAYS);
 
         return Result.success(token);
@@ -62,7 +62,11 @@ public class TeacherLoginServiceImpl implements TeacherLoginService {
         if (StringUtils.isBlank(teacherJSON)) {
             return null;
         }
-        return(JSON.parseObject(teacherJSON, Teacher.class));
+        Teacher teacher = JSON.parseObject(teacherJSON, Teacher.class));
+        if (teacher.getTeacherId() == null || teacher.getTeacherName() == null) {
+            return null;
+        }
+        return teacher;
     }
 
     @Override
@@ -88,7 +92,7 @@ public class TeacherLoginServiceImpl implements TeacherLoginService {
 
         this.teacherService.save(teacher);
 
-        String token = JWTUtils.createToken(teacher.getTeacherId());
+        String token = JWTUtils.createToken(teacher.getTeacherId(), "teacher");
         redisTemplate.opsForValue().set("TOKEN_" + token, JSON.toJSONString(teacher), 1, TimeUnit.DAYS);
 
         return Result.success(token);

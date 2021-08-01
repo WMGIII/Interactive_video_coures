@@ -43,7 +43,7 @@ public class StudentLoginServiceImpl implements StudentLoginService {
         if (student == null) {
             return Result.fail(ErrorCode.ACCOUNT_PWD_NOT_EXIST.getCode(), ErrorCode.ACCOUNT_PWD_NOT_EXIST.getMsg());
         }
-        String token = JWTUtils.createToken(student.getStudentId());
+        String token = JWTUtils.createToken(student.getStudentId(), "student");
         redisTemplate.opsForValue().set("TOKEN_" + token, JSON.toJSONString(student), 1, TimeUnit.DAYS);
 
         return Result.success(token);
@@ -62,7 +62,11 @@ public class StudentLoginServiceImpl implements StudentLoginService {
         if (StringUtils.isBlank(studentJSON)) {
             return null;
         }
-        return(JSON.parseObject(studentJSON, Student.class));
+        Student student = JSON.parseObject(studentJSON, Student.class);
+        if (student.getStudentId() == null || student.getStudentName() == null) {
+            return null;
+        }
+        return student;
     }
 
     @Override
@@ -88,7 +92,7 @@ public class StudentLoginServiceImpl implements StudentLoginService {
 
         this.studentService.save(student);
 
-        String token = JWTUtils.createToken(student.getStudentId());
+        String token = JWTUtils.createToken(student.getStudentId(), "student");
         redisTemplate.opsForValue().set("TOKEN_" + token, JSON.toJSONString(student), 1, TimeUnit.DAYS);
 
         return Result.success(token);
