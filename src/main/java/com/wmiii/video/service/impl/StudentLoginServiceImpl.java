@@ -3,6 +3,7 @@ package com.wmiii.video.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.wmiii.video.entity.Student;
 import com.wmiii.video.params.ErrorCode;
+import com.wmiii.video.params.IdentifyParams;
 import com.wmiii.video.params.LoginParam;
 import com.wmiii.video.params.Result;
 import com.wmiii.video.service.StudentLoginService;
@@ -43,7 +44,7 @@ public class StudentLoginServiceImpl implements StudentLoginService {
         if (student == null) {
             return Result.fail(ErrorCode.ACCOUNT_PWD_NOT_EXIST.getCode(), ErrorCode.ACCOUNT_PWD_NOT_EXIST.getMsg());
         }
-        String token = JWTUtils.createToken(student.getStudentId(), "student");
+        String token = JWTUtils.createToken(student.getStudentId(), IdentifyParams.jwtSToken);
         redisTemplate.opsForValue().set("TOKEN_" + token, JSON.toJSONString(student), 1, TimeUnit.DAYS);
 
         return Result.success(token);
@@ -54,7 +55,7 @@ public class StudentLoginServiceImpl implements StudentLoginService {
         if (StringUtils.isBlank(token)) {
             return null;
         }
-        Map<String, Object> stringObjectMap = JWTUtils.checkToken(token, "student");
+        Map<String, Object> stringObjectMap = JWTUtils.checkToken(token, IdentifyParams.jwtSToken);
         if (stringObjectMap == null) {
             return null;
         }
@@ -92,7 +93,7 @@ public class StudentLoginServiceImpl implements StudentLoginService {
 
         this.studentService.save(student);
 
-        String token = JWTUtils.createToken(student.getStudentId(), "student");
+        String token = JWTUtils.createToken(student.getStudentId(), IdentifyParams.jwtSToken);
         redisTemplate.opsForValue().set("TOKEN_" + token, JSON.toJSONString(student), 1, TimeUnit.DAYS);
 
         return Result.success(token);

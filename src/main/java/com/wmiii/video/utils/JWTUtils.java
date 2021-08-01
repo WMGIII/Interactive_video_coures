@@ -13,7 +13,7 @@ public class JWTUtils {
 
     private static final String jwtSToken = "123456!@#$$";
     private static final String jwtTToken = "345678#$%^&*";
-    private static final HashMap<String, String> identifies = new HashMap();
+    private static final HashMap<String, String> identifies = new HashMap<>();
 
     public JWTUtils() {
         identifies.put("student", jwtSToken);
@@ -26,7 +26,7 @@ public class JWTUtils {
         JwtBuilder jwtBuilder;
 
         jwtBuilder = Jwts.builder()
-                .signWith(SignatureAlgorithm.HS256, identifies.get(identify)) // 签发算法，秘钥为jwtToken
+                .signWith(SignatureAlgorithm.HS256, identify) // 签发算法，秘钥为jwtToken
                 .setClaims(claims) // body数据，要唯一，自行设置
                 .setIssuedAt(new Date()) // 设置签发时间
                 .setExpiration(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 60 * 1000));// 一天的有效时间
@@ -37,7 +37,7 @@ public class JWTUtils {
 
     public static Map<String, Object> checkToken(String token, String identify){
         try {
-            Jwt parse = Jwts.parser().setSigningKey(identifies.get(identify)).parse(token);
+            Jwt parse = Jwts.parser().setSigningKey(identify).parse(token);
             return (Map<String, Object>) parse.getBody();
         }catch (Exception e){
             e.printStackTrace();
