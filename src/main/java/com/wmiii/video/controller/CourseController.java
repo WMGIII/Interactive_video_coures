@@ -16,6 +16,11 @@ public class CourseController {
     @Autowired
     private TeacherService teacherService;
 
+    @PostMapping
+    public Result courses() {
+        return courseService.getAllCourses(1);
+    }
+
     @PostMapping("/create_course")
     public Result createCourse() {
         return Result.success(null);
