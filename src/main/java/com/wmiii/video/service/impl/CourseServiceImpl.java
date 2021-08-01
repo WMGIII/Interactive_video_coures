@@ -1,6 +1,7 @@
 package com.wmiii.video.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.qiniu.http.Error;
 import com.wmiii.video.entity.Course;
 import com.wmiii.video.entity.Student;
 import com.wmiii.video.entity.Teacher;
@@ -77,6 +78,10 @@ public class CourseServiceImpl implements CourseService {
             return Result.fail(ErrorCode.PARAMS_ERROR.getCode(), ErrorCode.PARAMS_ERROR.getMsg());
         }
         Teacher teacher = (Teacher)teacherLoginService.findUserByToken(token).getData();
+        if (teacher == null) {
+            return Result.fail(ErrorCode.NO_LOGIN.getCode(), ErrorCode.NO_LOGIN.getMsg());
+        }
+
         if ((findCourseByCourseNameAndTeacher(teacher.getTeacherId(), courseParam.getCourseName())) != null) {
             return Result.fail(ErrorCode.CREATE_COURSE_FAIL.getCode(), ErrorCode.CREATE_COURSE_FAIL.getMsg());
         }

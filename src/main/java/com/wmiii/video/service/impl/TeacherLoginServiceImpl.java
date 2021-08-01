@@ -54,7 +54,7 @@ public class TeacherLoginServiceImpl implements TeacherLoginService {
         if (StringUtils.isBlank(token)) {
             return null;
         }
-        Map<String, Object> stringObjectMap = JWTUtils.checkToken(token);
+        Map<String, Object> stringObjectMap = JWTUtils.checkToken(token, "teacher");
         if (stringObjectMap == null) {
             return null;
         }

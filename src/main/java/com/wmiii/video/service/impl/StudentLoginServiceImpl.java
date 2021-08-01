@@ -54,7 +54,7 @@ public class StudentLoginServiceImpl implements StudentLoginService {
         if (StringUtils.isBlank(token)) {
             return null;
         }
-        Map<String, Object> stringObjectMap = JWTUtils.checkToken(token);
+        Map<String, Object> stringObjectMap = JWTUtils.checkToken(token, "student");
         if (stringObjectMap == null) {
             return null;
         }
