@@ -11,6 +11,7 @@ import com.wmiii.video.params.CourseParam;
 import com.wmiii.video.params.ErrorCode;
 import com.wmiii.video.params.Result;
 import com.wmiii.video.params.StudentCourse;
+import com.wmiii.video.params.vo.LoginTeacherVo;
 import com.wmiii.video.service.CourseService;
 import com.wmiii.video.service.StudentService;
 import com.wmiii.video.service.TeacherService;
@@ -77,7 +78,7 @@ public class CourseServiceImpl implements CourseService {
         if (StringUtils.isBlank(courseParam.getCourseName()) || StringUtils.isBlank(courseParam.getCourseIntro())) {
             return Result.fail(ErrorCode.PARAMS_ERROR.getCode(), ErrorCode.PARAMS_ERROR.getMsg());
         }
-        Teacher teacher = (Teacher)teacherLoginService.findUserByToken(token).getData();
+        LoginTeacherVo teacher = (LoginTeacherVo) teacherLoginService.findUserByToken(token).getData();
         if (teacher == null) {
             return Result.fail(ErrorCode.NO_LOGIN.getCode(), ErrorCode.NO_LOGIN.getMsg());
         }
