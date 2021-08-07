@@ -1,6 +1,7 @@
 package com.wmiii.video.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.qiniu.http.Error;
 import com.wmiii.video.entity.Course;
 import com.wmiii.video.entity.CourseVideo;
@@ -96,4 +97,13 @@ public class CourseVideoServiceImpl implements CourseVideoService {
         return courseVideo.getVideoId();
     }
 
+    @Override
+    public Integer getVideoIdByOriginName(Integer courseId, String videoName) {
+        LambdaQueryWrapper<CourseVideo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(CourseVideo::getCourseId, courseId);
+        queryWrapper.eq(CourseVideo::getVideoName, videoName);
+        queryWrapper.last("limit 1");
+
+        return courseVideoMapper.selectOne(queryWrapper).getVideoId();
+    }
 }

@@ -32,6 +32,7 @@ public class WebMVCConfig implements WebMvcConfigurer {
 
         teacherPatterns.add("/teacher/user_center");
         teacherPatterns.add("/courses/create_courses");
+
         registry.addInterceptor(teacherLoginInterceptor).addPathPatterns(teacherPatterns);
     }
 }
