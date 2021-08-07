@@ -2,7 +2,9 @@ package com.wmiii.video.controller;
 
 import com.wmiii.video.params.CourseParam;
 import com.wmiii.video.params.Result;
+import com.wmiii.video.params.UploadCourseParam;
 import com.wmiii.video.service.CourseService;
+import com.wmiii.video.service.CourseVideoService;
 import com.wmiii.video.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +16,7 @@ public class CourseController {
     private CourseService courseService;
 
     @Autowired
-    private TeacherService teacherService;
+    private CourseVideoService courseVideoService;
 
     @PostMapping
     public Result courses() {
@@ -39,5 +41,10 @@ public class CourseController {
     @PostMapping("/{courseId}/join")
     public Result joinCourse(@RequestHeader(value="Authorization", required = false) String token, @PathVariable Integer courseId) {
         return courseService.joinCourse(courseId, token);
+    }
+
+    @PostMapping("/{courseId}/video/submit")
+    public Result submitVideos(@RequestHeader(value="Authorization", required = false) String token, @PathVariable Integer courseId, @RequestBody UploadCourseParam uploadCourseParam) {
+        return courseVideoService.submit(uploadCourseParam, token);
     }
 }
