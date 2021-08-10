@@ -1,16 +1,20 @@
 package com.wmiii.video.utils;
 
 import com.alibaba.fastjson.JSON;
+import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
 import com.qiniu.storage.Configuration;
 import com.qiniu.storage.Region;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
+import com.qiniu.storage.persistent.FileRecorder;
 import com.qiniu.util.Auth;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.nio.file.Paths;
 
 @Component
 public class QiniuUtils {
@@ -22,26 +26,45 @@ public class QiniuUtils {
     @Value("${qiniu.accessSecretKey}")
     private  String accessSecretKey;
 
+    public FileRecorder fileRecorder;
+
     public  boolean upload(MultipartFile file,String fileName){
 
-        //构造一个带指定 Region 对象的配置类
         Configuration cfg = new Configuration(Region.huanan());
-        //...其他参数参考类注释
-        UploadManager uploadManager = new UploadManager(cfg);
-        //...生成上传凭证，然后准备上传
-        String bucket = "wmiii";
+        String bucket = "interactive-video-course";
+        Auth auth = Auth.create(accessKey, accessSecretKey);
+        String upToken = auth.uploadToken(bucket);
+
+        String key = null;
+
+        String localTempDir = Paths.get(System.getenv("java.io.tmpdir"), bucket).toString();
         //默认不指定key的情况下，以文件内容的hash值作为文件名
         try {
+            fileRecorder = new FileRecorder(localTempDir);
+
+            UploadManager uploadManager = new UploadManager(cfg, fileRecorder);
             byte[] uploadBytes = file.getBytes();
-            Auth auth = Auth.create(accessKey, accessSecretKey);
-            String upToken = auth.uploadToken(bucket);
+            try {
                 Response response = uploadManager.put(uploadBytes, fileName, upToken);
-                //解析上传成功的结果
                 DefaultPutRet putRet = JSON.parseObject(response.bodyString(), DefaultPutRet.class);
-                return true;
-            } catch (Exception ex) {
-                ex.printStackTrace();
+                System.out.println(putRet.key);
+                System.out.println(putRet.hash);
+            } catch (QiniuException ex) {
+                Response r = ex.response;
+                System.err.println(r.toString());
+                try {
+                    System.err.println(r.bodyString());
+                } catch (QiniuException ex2) {
+                    //ignore
+                }
             }
+
+
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         return false;
     }
 }
+

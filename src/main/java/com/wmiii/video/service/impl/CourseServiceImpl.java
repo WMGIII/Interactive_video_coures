@@ -14,12 +14,14 @@ import com.wmiii.video.params.StudentCourse;
 import com.wmiii.video.params.vo.LoginStudentVo;
 import com.wmiii.video.params.vo.LoginTeacherVo;
 import com.wmiii.video.service.CourseService;
+import com.wmiii.video.service.CourseVideoService;
 import com.wmiii.video.service.StudentService;
 import com.wmiii.video.service.TeacherService;
 import com.wmiii.video.utils.StudentThreadLocal;
 import com.wmiii.video.utils.TeacherThreadLocal;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +43,9 @@ public class CourseServiceImpl implements CourseService {
 
     @Autowired
     private TeacherService teacherService;
+
+    @Autowired @Lazy
+    private CourseVideoService courseVideoService;
 
     @Override
     public Result findCourseById(Integer courseId) {
@@ -96,7 +101,9 @@ public class CourseServiceImpl implements CourseService {
         course.setCreateDate(System.currentTimeMillis());
         this.courseMapper.insert(course);
 
-        return Result.success(null);
+        this.courseVideoService.setBlankStructure(course.getCourseId());
+
+        return Result.success(course.getCourseId());
     }
 
 

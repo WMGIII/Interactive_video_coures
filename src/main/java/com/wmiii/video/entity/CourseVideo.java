@@ -11,10 +11,7 @@ public class CourseVideo {
     @TableId(value = "videoId", type = IdType.AUTO)
     Integer videoId;
     String videoName;
-    String videoIntro;
+    // String videoIntro;
     Integer teacherId;
     Integer courseId;
-    Integer optionId;
-    String optionInfo;
-    String nextVideo;
 }

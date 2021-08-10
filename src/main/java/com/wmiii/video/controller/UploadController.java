@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/upload")
 public class UploadController {
@@ -28,7 +31,7 @@ public class UploadController {
     private CourseVideoService courseVideoService;
 
     @PostMapping("/video")
-    public Result uploadVideo(@RequestHeader(value="Authorization", required = false) String token, @RequestParam("video")MultipartFile file, @RequestParam Integer courseId) {
+    public Result uploadVideo(@RequestHeader(value="Authorization", required = false) String token, @RequestParam("video")MultipartFile[] files, @RequestParam Integer courseId) {
         Teacher teacher = teacherLoginService.checkToken(token);
         if (teacher == null) {
             return Result.fail(ErrorCode.TOKEN_ERROR.getCode(), ErrorCode.TOKEN_ERROR.getMsg());
@@ -39,15 +42,21 @@ public class UploadController {
             return Result.fail(ErrorCode.NO_PERMISSION.getCode(), ErrorCode.NO_PERMISSION.getMsg());
         }
 
-        String videoName = file.getOriginalFilename();
-        Integer videoId = courseVideoService.getVideoIdByOriginName(course.getCourseId(), videoName);
-        if (videoId == null) {
-            return Result.fail(10010, "视频上传错误");
+        Map<String, Object> resultMap = new HashMap<>();
+        for (MultipartFile file: files) {
+            String videoName = file.getOriginalFilename();
+            if (courseVideoService.findVideoByVideoName(videoName, courseId) != null) {
+                resultMap.put(videoName, "视频文件名重复");
+                continue;
+            }
+            Integer videoId = courseVideoService.storeVideo(videoName, courseId, teacher.getTeacherId());
+            if (qiniuUtils.upload(file, videoId.toString())) {
+                resultMap.put(videoName, videoId);
+            } else {
+                courseVideoService.deleteByVideoId(videoId);
+                resultMap.put(videoName, "视频上传失败");
+            }
         }
-
-        if (qiniuUtils.upload(file, videoId.toString())) {
-            return Result.success(QiniuUtils.url + videoId);
-        }
-        return Result.fail(ErrorCode.VIDEO_UPLOAD_FAIL.getCode(), ErrorCode.VIDEO_UPLOAD_FAIL.getMsg());
+        return Result.success(resultMap);
     }
 }

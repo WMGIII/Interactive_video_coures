@@ -6,7 +6,7 @@
     <insert id="insertVideo" useGeneratedKeys="true" keyProperty="videoId">
         INSERT
         INTO
-            courseVideo (videoName, videoIntro, teacherId, courseId, optionId, optionInfo, nextVideo)
-        VALUES(#{videoName},#{videoIntro},#{teacherId},#{courseId},#{optionId},#{optionInfo},#{nextVideo})
+            courseVideo (videoName, teacherId, courseId)
+        VALUES(#{videoName},#{teacherId},#{courseId})
     </insert>
 </mapper>

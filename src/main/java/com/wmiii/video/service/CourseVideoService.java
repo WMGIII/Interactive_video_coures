@@ -9,5 +9,13 @@ public interface CourseVideoService {
 
     Result submit(UploadCourseParam uploadCourseParam, String token);
 
+    Integer storeVideo(String videoName, Integer courseId, Integer teacherId);
+
     Integer getVideoIdByOriginName(Integer courseId, String videoName);
+
+    CourseVideo findVideoByVideoName(String videoName, Integer courseId);
+
+    Integer deleteByVideoId(Integer videoId);
+
+    Boolean setBlankStructure(Integer courseId);
 }
