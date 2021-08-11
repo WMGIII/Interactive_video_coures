@@ -47,4 +47,9 @@ public class CourseController {
     public Result submitVideos(@RequestHeader(value="Authorization", required = false) String token, @PathVariable Integer courseId, @RequestBody UploadCourseParam uploadCourseParam) {
         return courseVideoService.submit(uploadCourseParam, token);
     }
+
+    @PostMapping("/{courseId}/video")
+    public Result getStructure(@RequestHeader(value="Authorization", required = false) String token, @PathVariable Integer courseId) {
+        return courseVideoService.getStructureByCourseId(courseId, token);
+    }
 }

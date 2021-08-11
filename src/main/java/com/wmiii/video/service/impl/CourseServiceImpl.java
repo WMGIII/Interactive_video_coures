@@ -63,6 +63,7 @@ public class CourseServiceImpl implements CourseService {
         return Result.success(courses);
     }
 
+    @Override
     public StudentCourse findStudentCourse(Integer studentId, Integer courseId) {
         LambdaQueryWrapper<StudentCourse> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(StudentCourse::getStudentId, studentId);

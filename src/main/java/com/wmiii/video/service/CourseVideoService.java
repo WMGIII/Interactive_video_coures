@@ -4,6 +4,8 @@ import com.wmiii.video.entity.CourseVideo;
 import com.wmiii.video.params.Result;
 import com.wmiii.video.params.UploadCourseParam;
 
+import java.util.List;
+
 public interface CourseVideoService {
     Result findVideoByVideoId(Integer videoId);
 
@@ -18,4 +20,6 @@ public interface CourseVideoService {
     Integer deleteByVideoId(Integer videoId);
 
     Boolean setBlankStructure(Integer courseId);
+
+    Result getStructureByCourseId(Integer courseId, String token);
 }

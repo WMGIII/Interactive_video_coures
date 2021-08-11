@@ -3,17 +3,11 @@ package com.wmiii.video.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.qiniu.http.Error;
-import com.wmiii.video.entity.Course;
-import com.wmiii.video.entity.CourseStructure;
-import com.wmiii.video.entity.CourseVideo;
-import com.wmiii.video.entity.Teacher;
+import com.wmiii.video.entity.*;
 import com.wmiii.video.mapper.CourseStructureMapper;
 import com.wmiii.video.mapper.CourseVideoMapper;
 import com.wmiii.video.params.*;
-import com.wmiii.video.service.CourseService;
-import com.wmiii.video.service.CourseVideoService;
-import com.wmiii.video.service.TeacherLoginService;
-import com.wmiii.video.service.TeacherService;
+import com.wmiii.video.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
@@ -29,6 +23,9 @@ import java.util.List;
 public class CourseVideoServiceImpl implements CourseVideoService {
     @Autowired
     private TeacherLoginService teacherService;
+
+    @Autowired
+    private StudentLoginService studentLoginService;
 
     @Autowired @Lazy
     private CourseService courseService;
@@ -136,5 +133,41 @@ public class CourseVideoServiceImpl implements CourseVideoService {
         }
 
         return false;
+    }
+
+    @Override
+    public Result getStructureByCourseId(Integer courseId, String token) {
+        Student student = studentLoginService.checkToken(token);
+        Teacher teacher;
+        if (student == null) {
+            teacher = teacherService.checkToken(token);
+            if (teacher == null) {
+                return Result.fail(ErrorCode.TOKEN_ERROR.getCode(), ErrorCode.TOKEN_ERROR.getMsg());
+            }
+
+            if (((Course) courseService.findCourseById(courseId).getData()).getTeacherId() != teacher.getTeacherId()) {
+                return Result.fail(ErrorCode.NO_PERMISSION.getCode(), ErrorCode.NO_PERMISSION.getMsg());
+            }
+
+            return Result.success(getStructureList(getStructureJson(courseId)));
+        }
+
+        if (courseService.findStudentCourse(student.getStudentId(), courseId) == null) {
+            return Result.fail(ErrorCode.NO_ENTRANCE.getCode(), ErrorCode.NO_ENTRANCE.getMsg());
+        }
+
+        return Result.success(getStructureList(getStructureJson(courseId)));
+    }
+
+    public String getStructureJson(Integer courseId) {
+        LambdaQueryWrapper<CourseStructure> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(CourseStructure::getCourseId, courseId);
+        queryWrapper.last("limit 1");
+
+        return courseStructureMapper.selectOne(queryWrapper).getJsonStructure();
+    }
+
+    public List<CourseVideo> getStructureList(String jsonStructure) {
+        return JSON.parseArray(jsonStructure, CourseVideo.class);
     }
 }
