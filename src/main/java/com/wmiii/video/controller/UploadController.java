@@ -10,13 +10,13 @@ import com.wmiii.video.service.CourseVideoService;
 import com.wmiii.video.service.TeacherLoginService;
 import com.wmiii.video.utils.QiniuUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 @RestController
 @RequestMapping("/upload")
@@ -32,6 +32,9 @@ public class UploadController {
 
     @Autowired
     private CourseVideoService courseVideoService;
+
+    @Value("${qiniu.url}")
+    private String qiniuUrl;
 
     @PostMapping("/video")
     public Result uploadVideo(@RequestHeader(value="Authorization", required = false) String token, @RequestParam("video")MultipartFile[] files, @RequestParam Integer courseId) {
@@ -68,7 +71,7 @@ public class UploadController {
                 // String fileTyle=videoName.substring(videoName.lastIndexOf("."), videoName.length());
                 uploadVideoResultParam.setMessage("success");
                 uploadVideoResultParam.setVideoId(videoId);
-                uploadVideoResultParam.setUrl("qx0br5d5r.hn-bkt.clouddn.com/" + videoId + fileTyle);
+                uploadVideoResultParam.setUrl(qiniuUrl + videoId + fileTyle);
                 list.add(uploadVideoResultParam);
             } else {
                 courseVideoService.deleteByVideoId(videoId);
@@ -77,7 +80,6 @@ public class UploadController {
                 uploadVideoResultParam.setUrl(null);
                 list.add(uploadVideoResultParam);
             }
-
         }
         return Result.success(list);
     }

@@ -8,6 +8,7 @@ import com.wmiii.video.mapper.CourseStructureMapper;
 import com.wmiii.video.mapper.CourseVideoMapper;
 import com.wmiii.video.params.*;
 import com.wmiii.video.service.*;
+import io.jsonwebtoken.SignatureException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
@@ -137,8 +138,14 @@ public class CourseVideoServiceImpl implements CourseVideoService {
 
     @Override
     public Result getStructureByCourseId(Integer courseId, String token) {
-        Student student = studentLoginService.checkToken(token);
         Teacher teacher;
+        Student student = new Student();
+        try {
+            student = studentLoginService.checkToken(token);
+        } catch(SignatureException s) {
+            // System.out.println(s);
+        }
+
         if (student == null) {
             teacher = teacherService.checkToken(token);
             if (teacher == null) {
