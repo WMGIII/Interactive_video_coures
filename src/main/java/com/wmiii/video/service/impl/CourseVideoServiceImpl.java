@@ -92,7 +92,7 @@ public class CourseVideoServiceImpl implements CourseVideoService {
         courseVideo.setTeacherId(teacherId);
         // courseVideo.setVideoName(uploadVideoParam.getVideoName());
         // courseVideo.setVideoIntro(uploadVideoParam.getVideoIntro());
-        this.courseVideoMapper.insertVideo(courseVideo);
+        this.courseVideoMapper.insert(courseVideo);
 
         // System.out.println(courseVideo.getVideoId());
         return courseVideo.getVideoId();

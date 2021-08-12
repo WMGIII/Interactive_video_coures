@@ -4,6 +4,7 @@ import com.wmiii.video.entity.Course;
 import com.wmiii.video.entity.Teacher;
 import com.wmiii.video.params.ErrorCode;
 import com.wmiii.video.params.Result;
+import com.wmiii.video.params.UploadVideoResultParam;
 import com.wmiii.video.service.CourseService;
 import com.wmiii.video.service.CourseVideoService;
 import com.wmiii.video.service.TeacherLoginService;
@@ -12,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -38,25 +41,44 @@ public class UploadController {
         }
 
         Course course = (Course) courseService.findCourseById(courseId).getData();
+        if (course == null) {
+            return Result.fail(ErrorCode.COURSE_NOT_EXIST.getCode(), ErrorCode.COURSE_NOT_EXIST.getMsg());
+        }
+
         if (course.getTeacherId() != teacher.getTeacherId()) {
             return Result.fail(ErrorCode.NO_PERMISSION.getCode(), ErrorCode.NO_PERMISSION.getMsg());
         }
 
-        Map<String, Object> resultMap = new HashMap<>();
+        List<UploadVideoResultParam> list = new ArrayList<>();
+        UploadVideoResultParam uploadVideoResultParam;
         for (MultipartFile file: files) {
+            uploadVideoResultParam = new UploadVideoResultParam();
             String videoName = file.getOriginalFilename();
+            uploadVideoResultParam.setVideoName(videoName);
             if (courseVideoService.findVideoByVideoName(videoName, courseId) != null) {
-                resultMap.put(videoName, "视频文件名重复");
+                uploadVideoResultParam.setMessage("视频名称重复");
+                uploadVideoResultParam.setVideoId(null);
+                uploadVideoResultParam.setUrl(null);
+                list.add(uploadVideoResultParam);
                 continue;
             }
             Integer videoId = courseVideoService.storeVideo(videoName, courseId, teacher.getTeacherId());
-            if (qiniuUtils.upload(file, videoId.toString())) {
-                resultMap.put(videoName, videoId);
+            String fileTyle=videoName.substring(videoName.lastIndexOf("."), videoName.length());
+            if (qiniuUtils.upload(file, videoId.toString() + fileTyle)) {
+                // String fileTyle=videoName.substring(videoName.lastIndexOf("."), videoName.length());
+                uploadVideoResultParam.setMessage("success");
+                uploadVideoResultParam.setVideoId(videoId);
+                uploadVideoResultParam.setUrl("qx0br5d5r.hn-bkt.clouddn.com/" + videoId + fileTyle);
+                list.add(uploadVideoResultParam);
             } else {
                 courseVideoService.deleteByVideoId(videoId);
-                resultMap.put(videoName, "视频上传失败");
+                uploadVideoResultParam.setMessage("视频上传失败");
+                uploadVideoResultParam.setVideoId(null);
+                uploadVideoResultParam.setUrl(null);
+                list.add(uploadVideoResultParam);
             }
+
         }
-        return Result.success(resultMap);
+        return Result.success(list);
     }
 }

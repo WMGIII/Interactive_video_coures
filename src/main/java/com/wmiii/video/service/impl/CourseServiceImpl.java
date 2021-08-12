@@ -49,8 +49,18 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Result findCourseById(Integer courseId) {
-        Course course = this.courseMapper.selectById(courseId);
-        return Result.success(course);
+        // Course course = this.courseMapper.selectById(courseId);
+        LambdaQueryWrapper<Course> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Course::getCourseId, courseId);
+        queryWrapper.last("limit 1");
+
+        Course course = courseMapper.selectOne(queryWrapper);
+        if (course != null)
+        {
+            return Result.success(course);
+        } else {
+            return Result.fail(ErrorCode.COURSE_NOT_EXIST.getCode(), ErrorCode.COURSE_NOT_EXIST.getMsg());
+        }
     }
 
     @Override

@@ -9,7 +9,6 @@ import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.storage.persistent.FileRecorder;
 import com.qiniu.util.Auth;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -58,8 +57,6 @@ public class QiniuUtils {
                     //ignore
                 }
             }
-
-
             return true;
         } catch (Exception ex) {
             ex.printStackTrace();
