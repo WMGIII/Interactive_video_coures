@@ -112,7 +112,7 @@ public class CourseServiceImpl implements CourseService {
         course.setCreateDate(System.currentTimeMillis());
         this.courseMapper.insert(course);
 
-        this.courseVideoService.setBlankStructure(course.getCourseId());
+        // this.courseVideoService.setBlankStructure(course.getCourseId());
 
         return Result.success(course.getCourseId());
     }

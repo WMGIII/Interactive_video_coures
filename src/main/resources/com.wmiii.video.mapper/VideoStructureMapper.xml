@@ -2,11 +2,11 @@
 <!--MyBatis配置文件-->
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.wmiii.video.mapper.CourseStructureMapper">
+<mapper namespace="com.wmiii.video.mapper.VideoStructureMapper">
 
     <update id="updateStructure">
-        update courseStructure set jsonStructure=#{structure},lastChange=#{time}
-        where courseId=#{courseId}
+        update videoStructure set children=#{children},name=#{name}
+        where videoId=#{videoId}
     </update>
 
 </mapper>

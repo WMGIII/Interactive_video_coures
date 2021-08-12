@@ -10,9 +10,11 @@ import java.util.List;
 public class CourseVideo {
     @TableId(value = "videoId", type = IdType.AUTO)
     Integer videoId;
-    String videoName;
-    // String videoIntro;
-    Integer teacherId;
     Integer courseId;
+    Integer teacherId;
+    String name;
+    String fileType;
     String url;
+    String children;
+    Boolean isRoot;
 }

@@ -66,15 +66,16 @@ public class UploadController {
                 list.add(uploadVideoResultParam);
                 continue;
             }
-            String fileTyle=videoName.substring(videoName.lastIndexOf("."), videoName.length());
-            Integer videoId = courseVideoService.storeVideo(videoName, courseId, teacher.getTeacherId());
+            String fileType=videoName.substring(videoName.lastIndexOf("."), videoName.length());
+            Integer videoId = courseVideoService.storeVideo(videoName, courseId, teacher.getTeacherId(), fileType, false);
 
-            if (qiniuUtils.upload(file, videoId.toString() + fileTyle)) {
-                // String fileTyle=videoName.substring(videoName.lastIndexOf("."), videoName.length());
+            if (qiniuUtils.upload(file, videoId.toString() + fileType)) {
+                // String fileType=videoName.substring(videoName.lastIndexOf("."), videoName.length());
                 uploadVideoResultParam.setMessage("success");
                 uploadVideoResultParam.setVideoId(videoId);
-                uploadVideoResultParam.setUrl(qiniuUrl + videoId + fileTyle);
+                uploadVideoResultParam.setUrl(qiniuUrl + videoId + fileType);
                 list.add(uploadVideoResultParam);
+                courseVideoService.setUrl(courseId, fileType);
             } else {
                 courseVideoService.deleteByVideoId(videoId);
                 uploadVideoResultParam.setMessage("视频上传失败");

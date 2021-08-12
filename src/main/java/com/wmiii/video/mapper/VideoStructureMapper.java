@@ -5,6 +5,6 @@ import com.wmiii.video.entity.CourseStructure;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CourseStructureMapper extends BaseMapper<CourseStructure> {
-    Integer updateStructure(Integer courseId, String structure, Long time);
+public interface VideoStructureMapper extends BaseMapper<CourseStructure> {
+    Integer updateStructure(Integer videoId, String children, String name);
 }

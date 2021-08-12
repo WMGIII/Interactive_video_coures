@@ -9,4 +9,14 @@
             courseVideo (videoName, teacherId, courseId)
         VALUES(#{videoName},#{teacherId},#{courseId})
     </insert>
+
+    <update id="updateStructure">
+        update courseVideo set children=#{children},name=#{name},isRoot=#{isRoot}
+        where videoId=#{videoId}
+    </update>
+
+    <update id="setUrl">
+        update courseVideo set url=#{url}
+        where videoId=#{videoId}
+    </update>
 </mapper>

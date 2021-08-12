@@ -2,20 +2,19 @@ package com.wmiii.video.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.qiniu.http.Error;
 import com.wmiii.video.entity.*;
-import com.wmiii.video.mapper.CourseStructureMapper;
+import com.wmiii.video.mapper.VideoStructureMapper;
 import com.wmiii.video.mapper.CourseVideoMapper;
 import com.wmiii.video.params.*;
 import com.wmiii.video.service.*;
 import io.jsonwebtoken.SignatureException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -35,29 +34,55 @@ public class CourseVideoServiceImpl implements CourseVideoService {
     private CourseVideoMapper courseVideoMapper;
 
     @Autowired
-    private CourseStructureMapper courseStructureMapper;
+    private VideoStructureMapper videoStructureMapper;
+
+    @Value("${qiniu.url}")
+    private String qiniuUrl;
 
     @Override
-    public Result findVideoByVideoId(Integer videoId) {
-        return null;
+    public Result findVideoByVideoId(Integer videoId, String token) {
+        Teacher teacher;
+        Student student = new Student();
+        try {
+            student = studentLoginService.checkToken(token);
+        } catch(SignatureException s) {
+            // System.out.println(s);
+        }
+
+        if (student == null) {
+            teacher = teacherService.checkToken(token);
+            if (teacher == null) {
+                return Result.fail(ErrorCode.TOKEN_ERROR.getCode(), ErrorCode.TOKEN_ERROR.getMsg());
+            }
+            return Result.success(findVideoById(videoId));
+        }
+
+        return Result.success(findVideoById(videoId));
     }
 
+    public CourseVideo findVideoById(Integer videoId) {
+        LambdaQueryWrapper<CourseVideo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(CourseVideo::getVideoId, videoId);
+        queryWrapper.last("limit 1");
+
+        return courseVideoMapper.selectOne(queryWrapper);
+    }
 
     @Override
-    public Result submit(UploadCourseParam uploadCourseParam, String token) {
+    public Result submit(UploadVideoParam uploadVideoParam, String token) {
         Teacher teacher = teacherService.checkToken(token);
         if (teacher == null) {
             return Result.fail(ErrorCode.TOKEN_ERROR.getCode(), ErrorCode.TOKEN_ERROR.getMsg());
         }
-        Course course = (Course) courseService.findCourseById(uploadCourseParam.getCourseId()).getData();
+        Course course = (Course) courseService.findCourseById(uploadVideoParam.getCourseId()).getData();
         if (course == null) {
             return Result.fail(ErrorCode.COURSE_NOT_EXIST.getCode(), ErrorCode.COURSE_NOT_EXIST.getMsg());
         }
-        if ((course.getTeacherId() != teacher.getTeacherId()) || (course.getCourseId() != uploadCourseParam.getCourseId())) {
+        if ((course.getTeacherId() != teacher.getTeacherId()) || (course.getCourseId() != uploadVideoParam.getCourseId())) {
             return Result.fail(ErrorCode.NO_PERMISSION.getCode(), ErrorCode.NO_PERMISSION.getMsg());
         }
 
-        courseStructureMapper.updateStructure(course.getCourseId(), JSON.toJSONString(uploadCourseParam.getVideos()), System.currentTimeMillis());
+        courseVideoMapper.updateStructure(course.getCourseId(), JSON.toJSONString(uploadVideoParam.getChildren()), uploadVideoParam.getName(), uploadVideoParam.getIsRoot());
 
         return Result.success(null);
     }
@@ -86,11 +111,13 @@ public class CourseVideoServiceImpl implements CourseVideoService {
     }*/
 
     @Override
-    public Integer storeVideo(String videoName, Integer courseId, Integer teacherId) {
+    public Integer storeVideo(String videoName, Integer courseId, Integer teacherId, String fileType, Boolean isRoot) {
         CourseVideo courseVideo = new CourseVideo();
-        courseVideo.setVideoName(courseId + "/" + videoName);
+        courseVideo.setName(courseId + "/" + videoName);
         courseVideo.setCourseId(courseId);
         courseVideo.setTeacherId(teacherId);
+        courseVideo.setFileType(fileType);
+        courseVideo.setIsRoot(true);
         // courseVideo.setVideoName(uploadVideoParam.getVideoName());
         // courseVideo.setVideoIntro(uploadVideoParam.getVideoIntro());
         this.courseVideoMapper.insert(courseVideo);
@@ -103,7 +130,7 @@ public class CourseVideoServiceImpl implements CourseVideoService {
     public Integer getVideoIdByOriginName(Integer courseId, String videoName) {
         LambdaQueryWrapper<CourseVideo> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(CourseVideo::getCourseId, courseId);
-        queryWrapper.eq(CourseVideo::getVideoName, videoName);
+        queryWrapper.eq(CourseVideo::getName, videoName);
         queryWrapper.last("limit 1");
 
         return courseVideoMapper.selectOne(queryWrapper).getVideoId();
@@ -113,7 +140,7 @@ public class CourseVideoServiceImpl implements CourseVideoService {
     public CourseVideo findVideoByVideoName(String videoName, Integer courseId) {
         LambdaQueryWrapper<CourseVideo> queryWrapper = new LambdaQueryWrapper<>();
         // queryWrapper.eq(CourseVideo::getCourseId, courseId);
-        queryWrapper.eq(CourseVideo::getVideoName, courseId + "/" + videoName);
+        queryWrapper.eq(CourseVideo::getName, courseId + "/" + videoName);
         queryWrapper.last("limit 1");
         return courseVideoMapper.selectOne(queryWrapper);
     }
@@ -124,18 +151,18 @@ public class CourseVideoServiceImpl implements CourseVideoService {
     }
 
     @Override
-    public Boolean setBlankStructure(Integer courseId) {
+    public Boolean setBlankStructure(Integer videoId, Integer courseId, String fileType) {
         CourseStructure structure = new CourseStructure();
         structure.setCourseId(courseId);
         structure.setJsonStructure("");
         structure.setLastChange(System.currentTimeMillis());
-        if (this.courseStructureMapper.insert(structure) != 0) {
+        if (this.videoStructureMapper.insert(structure) != 0) {
             return true;
         }
-
         return false;
     }
 
+    /*
     @Override
     public Result getStructureByCourseId(Integer courseId, String token) {
         Teacher teacher;
@@ -171,12 +198,12 @@ public class CourseVideoServiceImpl implements CourseVideoService {
         queryWrapper.eq(CourseStructure::getCourseId, courseId);
         queryWrapper.last("limit 1");
 
-        return courseStructureMapper.selectOne(queryWrapper).getJsonStructure();
+        return videoStructureMapper.selectOne(queryWrapper).getJsonStructure();
     }
 
     public List<CourseVideo> getStructureList(String jsonStructure) {
         return JSON.parseArray(jsonStructure, CourseVideo.class);
-    }
+    }*/
 
     @Override
     public Result getVideoList(Integer courseId, String token) {
@@ -196,6 +223,33 @@ public class CourseVideoServiceImpl implements CourseVideoService {
         LambdaQueryWrapper<CourseVideo> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(CourseVideo::getCourseId, courseId);
 
-        return courseVideoMapper.selectList(queryWrapper);
+        List<CourseVideo> list = courseVideoMapper.selectList(queryWrapper);
+        for (CourseVideo video: list) {
+            video.setFileType(qiniuUrl + video.getVideoId() + video.getFileType());
+        }
+        return list;
+    }
+
+    @Override
+    public Integer setUrl(Integer courseId, String fileType) {
+        return courseVideoMapper.setUrl(courseId, qiniuUrl + courseId + fileType);
+    }
+
+    @Override
+    public Result getRootVideo(Integer courseId, String token) {
+        CourseVideo courseVideo = findRootVideo(courseId);
+        if (courseVideo == null) {
+            return Result.fail(ErrorCode.COURSE_NOT_EXIST.getCode(), ErrorCode.COURSE_NOT_EXIST.getMsg());
+        }
+        return Result.success(courseVideo);
+    }
+
+    public CourseVideo findRootVideo(Integer courseId) {
+        LambdaQueryWrapper<CourseVideo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(CourseVideo::getCourseId, courseId);
+        queryWrapper.eq(CourseVideo::getIsRoot, 1);
+        queryWrapper.last("limit 1");
+
+        return courseVideoMapper.selectOne(queryWrapper);
     }
 }

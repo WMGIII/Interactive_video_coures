@@ -3,6 +3,7 @@ package com.wmiii.video.controller;
 import com.wmiii.video.params.CourseParam;
 import com.wmiii.video.params.Result;
 import com.wmiii.video.params.UploadCourseParam;
+import com.wmiii.video.params.UploadVideoParam;
 import com.wmiii.video.service.CourseService;
 import com.wmiii.video.service.CourseVideoService;
 import com.wmiii.video.service.TeacherService;
@@ -44,17 +45,22 @@ public class CourseController {
     }
 
     @PostMapping("/{courseId}/video/submit")
-    public Result submitVideos(@RequestHeader(value="Authorization", required = false) String token, @PathVariable Integer courseId, @RequestBody UploadCourseParam uploadCourseParam) {
-        return courseVideoService.submit(uploadCourseParam, token);
+    public Result submitVideos(@RequestHeader(value="Authorization", required = false) String token, @PathVariable Integer courseId, @RequestBody UploadVideoParam uploadVideoParam) {
+        return courseVideoService.submit(uploadVideoParam, token);
     }
 
-    @PostMapping("/{courseId}/video")
-    public Result getStructure(@RequestHeader(value="Authorization", required = false) String token, @PathVariable Integer courseId) {
-        return courseVideoService.getStructureByCourseId(courseId, token);
+    @PostMapping("/{courseId}/video/{videoId}")
+    public Result getStructure(@RequestHeader(value="Authorization", required = false) String token, @PathVariable Integer courseId, @PathVariable Integer videoId) {
+        return courseVideoService.findVideoByVideoId(videoId, token);
     }
 
     @PostMapping("/{courseId}/videoList")
     public Result getVideoList(@RequestHeader(value="Authorization", required = false) String token, @PathVariable Integer courseId) {
         return courseVideoService.getVideoList(courseId, token);
+    }
+
+    @PostMapping("/{courseId}/video")
+    public Result getRoot(@RequestHeader(value="Authorization", required = false) String token, @PathVariable Integer courseId) {
+        return courseVideoService.getRootVideo(courseId, token);
     }
 }
