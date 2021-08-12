@@ -14,4 +14,5 @@ public class CourseVideo {
     // String videoIntro;
     Integer teacherId;
     Integer courseId;
+    String url;
 }

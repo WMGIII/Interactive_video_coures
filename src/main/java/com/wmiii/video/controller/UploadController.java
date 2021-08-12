@@ -66,8 +66,9 @@ public class UploadController {
                 list.add(uploadVideoResultParam);
                 continue;
             }
-            Integer videoId = courseVideoService.storeVideo(videoName, courseId, teacher.getTeacherId());
             String fileTyle=videoName.substring(videoName.lastIndexOf("."), videoName.length());
+            Integer videoId = courseVideoService.storeVideo(videoName, courseId, teacher.getTeacherId());
+
             if (qiniuUtils.upload(file, videoId.toString() + fileTyle)) {
                 // String fileTyle=videoName.substring(videoName.lastIndexOf("."), videoName.length());
                 uploadVideoResultParam.setMessage("success");
