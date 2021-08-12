@@ -177,4 +177,25 @@ public class CourseVideoServiceImpl implements CourseVideoService {
     public List<CourseVideo> getStructureList(String jsonStructure) {
         return JSON.parseArray(jsonStructure, CourseVideo.class);
     }
+
+    @Override
+    public Result getVideoList(Integer courseId, String token) {
+        Teacher teacher = teacherService.checkToken(token);
+        if (teacher == null) {
+            return Result.fail(ErrorCode.TOKEN_ERROR.getCode(), ErrorCode.TOKEN_ERROR.getMsg());
+        }
+
+        if (((Course) courseService.findCourseById(courseId).getData()).getTeacherId() != teacher.getTeacherId()) {
+            return Result.fail(ErrorCode.NO_PERMISSION.getCode(), ErrorCode.NO_PERMISSION.getMsg());
+        }
+
+        return Result.success(findVideoByCourseId(courseId));
+    }
+
+    public List<CourseVideo> findVideoByCourseId(Integer courseId) {
+        LambdaQueryWrapper<CourseVideo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(CourseVideo::getCourseId, courseId);
+
+        return courseVideoMapper.selectList(queryWrapper);
+    }
 }

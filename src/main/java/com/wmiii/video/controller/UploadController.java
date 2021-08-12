@@ -1,6 +1,7 @@
 package com.wmiii.video.controller;
 
 import com.wmiii.video.entity.Course;
+import com.wmiii.video.entity.CourseVideo;
 import com.wmiii.video.entity.Teacher;
 import com.wmiii.video.params.ErrorCode;
 import com.wmiii.video.params.Result;

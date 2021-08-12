@@ -22,4 +22,6 @@ public interface CourseVideoService {
     Boolean setBlankStructure(Integer courseId);
 
     Result getStructureByCourseId(Integer courseId, String token);
+
+    Result getVideoList(Integer courseId, String token);
 }

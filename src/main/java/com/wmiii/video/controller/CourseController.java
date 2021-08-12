@@ -52,4 +52,9 @@ public class CourseController {
     public Result getStructure(@RequestHeader(value="Authorization", required = false) String token, @PathVariable Integer courseId) {
         return courseVideoService.getStructureByCourseId(courseId, token);
     }
+
+    @PostMapping("/{courseId}/videoList")
+    public Result getVideoList(@RequestHeader(value="Authorization", required = false) String token, @PathVariable Integer courseId) {
+        return courseVideoService.getVideoList(courseId, token);
+    }
 }
