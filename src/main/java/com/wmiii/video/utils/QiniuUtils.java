@@ -40,7 +40,6 @@ public class QiniuUtils {
         //默认不指定key的情况下，以文件内容的hash值作为文件名
         try {
             fileRecorder = new FileRecorder(localTempDir);
-
             UploadManager uploadManager = new UploadManager(cfg, fileRecorder);
             byte[] uploadBytes = file.getBytes();
             try {

@@ -82,7 +82,7 @@ public class CourseVideoServiceImpl implements CourseVideoService {
             return Result.fail(ErrorCode.NO_PERMISSION.getCode(), ErrorCode.NO_PERMISSION.getMsg());
         }
 
-        courseVideoMapper.updateStructure(course.getCourseId(), JSON.toJSONString(uploadVideoParam.getChildren()), uploadVideoParam.getName(), uploadVideoParam.getIsRoot());
+        courseVideoMapper.updateStructure(uploadVideoParam.getVideoId(), JSON.toJSONString(uploadVideoParam.getChildren()), uploadVideoParam.getName(), uploadVideoParam.getIsRoot());
 
         return Result.success(null);
     }
