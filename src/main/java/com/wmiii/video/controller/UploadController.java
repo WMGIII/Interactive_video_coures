@@ -38,7 +38,7 @@ public class UploadController {
     private String qiniuUrl;
 
     @PostMapping("/video")
-    public Result uploadVideo(@RequestHeader(value="Authorization", required = false) String token, @RequestParam("video")MultipartFile[] files, @RequestParam Integer courseId) {
+    public Result uploadVideo(@RequestHeader(value="Authorization", required = false) String token, @RequestParam("file")MultipartFile[] files, @RequestParam Integer courseId) {
         Teacher teacher = teacherLoginService.checkToken(token);
         if (teacher == null) {
             return Result.fail(ErrorCode.TOKEN_ERROR.getCode(), ErrorCode.TOKEN_ERROR.getMsg());
