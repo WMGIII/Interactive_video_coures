@@ -40,7 +40,7 @@ public class JWTUtils {
             Jwt parse = Jwts.parser().setSigningKey(identify).parse(token);
             return (Map<String, Object>) parse.getBody();
         }catch (Exception e){
-            e.printStackTrace();
+            // e.printStackTrace();
         }
         return null;
 

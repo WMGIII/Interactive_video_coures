@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.nio.file.Paths;
 
 @Component
@@ -39,11 +40,12 @@ public class QiniuUtils {
         String localTempDir = Paths.get(System.getenv("java.io.tmpdir"), bucket).toString();
         //默认不指定key的情况下，以文件内容的hash值作为文件名
         try {
-            fileRecorder = new FileRecorder(localTempDir);
-            UploadManager uploadManager = new UploadManager(cfg, fileRecorder);
+            UploadManager uploadManager = new UploadManager(cfg);
             byte[] uploadBytes = file.getBytes();
+            ByteArrayInputStream byteInputStream=new ByteArrayInputStream(uploadBytes);
             try {
-                Response response = uploadManager.put(uploadBytes, fileName, upToken);
+                Response response = uploadManager.put(byteInputStream,fileName,upToken,null, null);
+                //解析上传成功的结果
                 DefaultPutRet putRet = JSON.parseObject(response.bodyString(), DefaultPutRet.class);
                 System.out.println(putRet.key);
                 System.out.println(putRet.hash);
