@@ -26,7 +26,7 @@ public interface CourseVideoService {
 
     Result getVideoList(Integer courseId, String token);
 
-    Integer setUrl(Integer courseId, String fileType);
+    Integer setUrl(Integer videoId, String fileType);
 
     Result getRootVideo(Integer courseId, String token);
 }

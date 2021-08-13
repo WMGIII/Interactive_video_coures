@@ -75,7 +75,7 @@ public class UploadController {
                 uploadVideoResultParam.setVideoId(videoId);
                 uploadVideoResultParam.setUrl(qiniuUrl + videoId + fileType);
                 list.add(uploadVideoResultParam);
-                courseVideoService.setUrl(courseId, fileType);
+                courseVideoService.setUrl(videoId, fileType);
             } else {
                 courseVideoService.deleteByVideoId(videoId);
                 uploadVideoResultParam.setMessage("视频上传失败");

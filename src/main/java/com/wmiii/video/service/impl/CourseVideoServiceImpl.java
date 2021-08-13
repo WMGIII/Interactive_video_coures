@@ -82,8 +82,19 @@ public class CourseVideoServiceImpl implements CourseVideoService {
             return Result.fail(ErrorCode.NO_PERMISSION.getCode(), ErrorCode.NO_PERMISSION.getMsg());
         }
 
-        courseVideoMapper.updateStructure(uploadVideoParam.getVideoId(), JSON.toJSONString(uploadVideoParam.getChildren()), uploadVideoParam.getName(), uploadVideoParam.getIsRoot());
+        // courseVideoMapper.updateStructure(uploadVideoParam.getVideoId(), JSON.toJSONString(uploadVideoParam.getChildren()), uploadVideoParam.getName(), uploadVideoParam.getIsRoot());
+        CourseVideo courseVideo = findVideoById(uploadVideoParam.getVideoId());
+        courseVideo.setChildren(JSON.toJSONString(uploadVideoParam.getChildren()));
+        courseVideo.setName(uploadVideoParam.getName());
+        courseVideo.setIsRoot(uploadVideoParam.getIsRoot());
 
+        return updateVideo(courseVideo);
+    }
+
+    public Result updateVideo(CourseVideo courseVideo) {
+        LambdaQueryWrapper<CourseVideo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(CourseVideo::getVideoId, courseVideo.getVideoId());
+        courseVideoMapper.update(courseVideo, queryWrapper);
         return Result.success(null);
     }
 
@@ -231,8 +242,12 @@ public class CourseVideoServiceImpl implements CourseVideoService {
     }
 
     @Override
-    public Integer setUrl(Integer courseId, String fileType) {
-        return courseVideoMapper.setUrl(courseId, qiniuUrl + courseId + fileType);
+    public Integer setUrl(Integer videoId, String fileType) {
+        CourseVideo courseVideo = findVideoById(videoId);
+        courseVideo.setFileType(fileType);
+        courseVideo.setUrl(qiniuUrl + videoId + fileType);
+        updateVideo(courseVideo);
+        return 1;
     }
 
     @Override
