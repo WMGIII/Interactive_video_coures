@@ -39,8 +39,8 @@ public class JWTUtils {
         try {
             Jwt parse = Jwts.parser().setSigningKey(identify).parse(token);
             return (Map<String, Object>) parse.getBody();
-        }catch (Exception e){
-            // e.printStackTrace();
+        }catch (Exception e) {
+            System.out.println("identify failed");
         }
         return null;
 
