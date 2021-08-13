@@ -11,6 +11,6 @@ public class UploadVideoParam {
     Integer videoId;
     Integer courseId;
     String name;
-    UploadVideoParam children;
+    List<UploadVideoParam> children;
     Boolean isRoot;
 }
