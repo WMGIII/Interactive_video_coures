@@ -53,7 +53,7 @@ public class CourseController {
 
     @PostMapping("/{courseId}/video/{videoId}")
     public Result getStructure(@RequestHeader(value="Authorization", required = false) String token, @PathVariable Integer courseId, @PathVariable Integer videoId) {
-        return videoStructureService.getStructure(courseId);
+        return courseVideoService.findVideoByVideoId(videoId, token);
     }
 
     @PostMapping("/{courseId}/videoList")
@@ -63,6 +63,6 @@ public class CourseController {
 
     @PostMapping("/{courseId}/video")
     public Result getRoot(@RequestHeader(value="Authorization", required = false) String token, @PathVariable Integer courseId) {
-        return courseVideoService.getRootVideo(courseId, token);
+        return videoStructureService.getStructure(courseId);
     }
 }
