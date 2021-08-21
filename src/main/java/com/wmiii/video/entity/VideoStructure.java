@@ -8,7 +8,6 @@ import lombok.Data;
 public class VideoStructure {
     @TableId(value = "id", type = IdType.AUTO)
     Integer id;
-    Integer videoId;
     Integer courseId;
     String edge;
 }

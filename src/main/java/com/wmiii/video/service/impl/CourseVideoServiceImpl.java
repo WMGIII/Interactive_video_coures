@@ -167,9 +167,10 @@ public class CourseVideoServiceImpl implements CourseVideoService {
         structure.setCourseId(courseId);
         structure.setJsonStructure("");
         structure.setLastChange(System.currentTimeMillis());
+        /*
         if (this.videoStructureMapper.insert(structure) != 0) {
             return true;
-        }
+        }*/
         return false;
     }
 

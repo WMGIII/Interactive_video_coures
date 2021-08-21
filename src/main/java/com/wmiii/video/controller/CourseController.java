@@ -1,10 +1,6 @@
 package com.wmiii.video.controller;
 
-import com.wmiii.video.entity.VideoStructure;
-import com.wmiii.video.params.CourseParam;
-import com.wmiii.video.params.Result;
-import com.wmiii.video.params.UploadCourseParam;
-import com.wmiii.video.params.UploadVideoParam;
+import com.wmiii.video.params.*;
 import com.wmiii.video.service.CourseService;
 import com.wmiii.video.service.CourseVideoService;
 import com.wmiii.video.service.TeacherService;
@@ -50,13 +46,14 @@ public class CourseController {
     }
 
     @PostMapping("/{courseId}/video/submit")
-    public Result submitVideos(@RequestHeader(value="Authorization", required = false) String token, @PathVariable Integer courseId, @RequestBody VideoStructure s) {
-        return videoStructureService.storeStructure(s);
+    public Result submitVideos(@RequestHeader(value="Authorization", required = false) String token, @PathVariable Integer courseId, @RequestBody VideoStructureParam v) {
+        return videoStructureService.storeStructure(v);
+        // return null;
     }
 
     @PostMapping("/{courseId}/video/{videoId}")
     public Result getStructure(@RequestHeader(value="Authorization", required = false) String token, @PathVariable Integer courseId, @PathVariable Integer videoId) {
-        return videoStructureService.getStructure(courseId, videoId);
+        return videoStructureService.getStructure(courseId);
     }
 
     @PostMapping("/{courseId}/videoList")
