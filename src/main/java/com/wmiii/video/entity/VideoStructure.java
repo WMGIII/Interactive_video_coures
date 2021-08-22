@@ -10,4 +10,5 @@ public class VideoStructure {
     Integer id;
     Integer courseId;
     String edge;
+    String title;
 }

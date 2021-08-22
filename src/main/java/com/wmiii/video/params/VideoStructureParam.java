@@ -6,4 +6,5 @@ import lombok.Data;
 public class VideoStructureParam {
     Integer courseId;
     String edge;
+    String title;
 }

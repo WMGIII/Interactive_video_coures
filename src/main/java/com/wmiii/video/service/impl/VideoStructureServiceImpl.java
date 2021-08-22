@@ -20,8 +20,8 @@ public class VideoStructureServiceImpl implements VideoStructureService {
     public Result getStructure(Integer courseId) {
         LambdaQueryWrapper<VideoStructure> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(VideoStructure::getCourseId, courseId);
-        queryWrapper.last("limit 1");
-        return Result.success(videoStructureMapper.selectOne(queryWrapper));
+        // queryWrapper.last("limit 1");
+        return Result.success(videoStructureMapper.selectList(queryWrapper));
     }
 
     @Override
@@ -29,6 +29,7 @@ public class VideoStructureServiceImpl implements VideoStructureService {
         VideoStructure videoStructure = new VideoStructure();
         videoStructure.setCourseId(videoStructureParam.getCourseId());
         videoStructure.setEdge(videoStructureParam.getEdge());
+        videoStructure.setTitle(videoStructureParam.getTitle());
         videoStructureMapper.insert(videoStructure);
         return Result.success(null);
     }

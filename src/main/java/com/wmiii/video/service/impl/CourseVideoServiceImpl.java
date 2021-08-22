@@ -54,10 +54,10 @@ public class CourseVideoServiceImpl implements CourseVideoService {
             if (teacher == null) {
                 return Result.fail(ErrorCode.TOKEN_ERROR.getCode(), ErrorCode.TOKEN_ERROR.getMsg());
             }
-            return Result.success(findVideoById(videoId));
+            return Result.success(findVideoUrlById(videoId));
         }
 
-        return Result.success(findVideoById(videoId));
+        return Result.success(findVideoUrlById(videoId));
     }
 
     public CourseVideo findVideoById(Integer videoId) {
@@ -66,6 +66,16 @@ public class CourseVideoServiceImpl implements CourseVideoService {
         queryWrapper.last("limit 1");
 
         return courseVideoMapper.selectOne(queryWrapper);
+    }
+
+
+    public String findVideoUrlById(Integer videoId) {
+        LambdaQueryWrapper<CourseVideo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(CourseVideo::getVideoId, videoId);
+        queryWrapper.last("limit 1");
+
+        CourseVideo courseVideo = courseVideoMapper.selectOne(queryWrapper);
+        return qiniuUrl + courseVideo.getVideoId() + courseVideo.getFileType();
     }
 
     @Override
