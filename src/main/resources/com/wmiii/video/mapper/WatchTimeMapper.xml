@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--MyBatis配置文件-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wmiii.video.mapper.WatchTimeMapper">
+    <update id="updateTime">
+        update watch_time set mTime=mTime+#{mTime}
+        where studentId=#{studentId} and videoId=#{videoId} and courseId=#{courseId}
+    </update>
+
+    <select id="getTimes" resultType="com.wmiii.video.params.vo.StudentTimeVo">
+        select studentId, mTime as 'times' from watch_time
+        where courseId=#{courseId} and videoId=#{videoId}
+    </select>
+</mapper>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--MyBatis配置文件-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wmiii.video.mapper.VideoStructureMapper">
+
+    <update id="updateStructure">
+        update video_structure set edge=#{edge},title=#{title}
+        where id=#{id}
+    </update>
+
+    <delete id="deleteStructure">
+        delete from video_structure where courseId=#{courseId} and title=#{title}
+    </delete>
+
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--MyBatis配置文件-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wmiii.video.mapper.CourseVideoMapper">
+    <insert id="insertVideo" useGeneratedKeys="true" keyProperty="videoId">
+        INSERT
+        INTO
+            courseVideo (videoName, teacherId, courseId)
+        VALUES(#{videoName},#{teacherId},#{courseId})
+    </insert>
+
+    <update id="updateStructure">
+        update courseVideo set children=#{children},name=#{name},isRoot=#{isRoot}
+        where videoId=#{videoId}
+    </update>
+
+    <update id="setUrl">
+        update courseVideo set url=#{url}
+        where videoId=#{videoId}
+    </update>
+</mapper>
