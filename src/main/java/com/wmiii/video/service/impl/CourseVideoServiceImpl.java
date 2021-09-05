@@ -9,6 +9,7 @@ import com.wmiii.video.params.*;
 import com.wmiii.video.service.*;
 import io.jsonwebtoken.SignatureException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
@@ -27,7 +28,8 @@ public class CourseVideoServiceImpl implements CourseVideoService {
     @Autowired
     private StudentLoginService studentLoginService;
 
-    @Autowired @Lazy
+    @Qualifier("CourseService")
+    @Autowired
     private CourseService courseService;
 
     @Autowired

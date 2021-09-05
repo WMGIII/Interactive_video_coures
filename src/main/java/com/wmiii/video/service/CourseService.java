@@ -1,5 +1,6 @@
 package com.wmiii.video.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.wmiii.video.params.CourseParam;
 import com.wmiii.video.params.Result;
 import com.wmiii.video.params.StudentCourse;

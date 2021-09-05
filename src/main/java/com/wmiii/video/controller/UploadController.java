@@ -11,6 +11,7 @@ import com.wmiii.video.service.CourseVideoService;
 import com.wmiii.video.service.TeacherLoginService;
 import com.wmiii.video.utils.QiniuUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,6 +29,7 @@ public class UploadController {
     @Autowired
     private TeacherLoginService teacherLoginService;
 
+    @Qualifier("CourseService")
     @Autowired
     private CourseService courseService;
 

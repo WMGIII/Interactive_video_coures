@@ -6,11 +6,14 @@ import com.wmiii.video.service.CourseVideoService;
 import com.wmiii.video.service.TeacherService;
 import com.wmiii.video.service.VideoStructureService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/courses")
 public class CourseController {
+
+    @Qualifier("CourseService")
     @Autowired
     private CourseService courseService;
 
@@ -64,5 +67,10 @@ public class CourseController {
     @PostMapping("/{courseId}/video")
     public Result getRoot(@RequestHeader(value="Authorization", required = false) String token, @PathVariable Integer courseId) {
         return videoStructureService.getStructure(courseId);
+    }
+
+    @PostMapping("/delete")
+    public Result deleteSection(@RequestHeader(value="Authorization", required = false) String token, @RequestParam CourseVideoParam courseVideoParam) {
+        return videoStructureService.deleteStructure(courseVideoParam, token);
     }
 }

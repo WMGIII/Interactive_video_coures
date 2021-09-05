@@ -31,7 +31,7 @@ public class QiniuUtils {
     public  boolean upload(MultipartFile file,String fileName){
 
         Configuration cfg = new Configuration(Region.huanan());
-        String bucket = "interactive-video-course";
+        String bucket = "interactive-video-course2";
         Auth auth = Auth.create(accessKey, accessSecretKey);
         String upToken = auth.uploadToken(bucket);
 

@@ -22,6 +22,7 @@ import com.wmiii.video.utils.TeacherThreadLocal;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Repository
-@Service
+@Service("CourseService")
 @Transactional
 public class CourseServiceImpl implements CourseService {
     @Autowired
@@ -43,9 +44,6 @@ public class CourseServiceImpl implements CourseService {
 
     @Autowired
     private TeacherService teacherService;
-
-    @Autowired @Lazy
-    private CourseVideoService courseVideoService;
 
     @Override
     public Result findCourseById(Integer courseId) {
@@ -137,9 +135,8 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public Result getAllCourses(Integer limit) {
         LambdaQueryWrapper<Course> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.ne(Course::getCourseId, -1);
+        queryWrapper.ne(Course::getCourseId, 0);
         // queryWrapper.last("limit " + limit);
-
         return Result.success(courseMapper.selectList(queryWrapper));
     }
 }
