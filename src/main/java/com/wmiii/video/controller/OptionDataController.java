@@ -22,6 +22,6 @@ public class OptionDataController {
 
     @PostMapping("/get/visit")
     Result getVisitData(@RequestHeader(value="Authorization", required = false) String token, @RequestBody CourseVideoIdParam param) {
-        return null;
+        return optionDataService.getChoiceData(token, param);
     }
 }
